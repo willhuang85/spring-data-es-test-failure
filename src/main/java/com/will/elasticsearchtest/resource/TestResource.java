@@ -4,10 +4,7 @@ import com.will.elasticsearchtest.entity.Vehicle;
 import com.will.elasticsearchtest.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
@@ -20,15 +17,17 @@ public class TestResource {
     private VehicleRepository repository;
 
     @GET
-    public Response getVehicle() {
-        Optional<Vehicle> vehicle = repository.findById("12345");
-        return Response.ok(vehicle.get()).build();
+    @Path("{vin}")
+    public Response getVehicle(@PathParam("vin") String vin) {
+        Optional<Vehicle> vehicle = repository.findById(vin);
+        return Response.ok(vehicle.orElse(null)).build();
     }
 
     @POST
-    public Response postVehicle() {
+    @Path("{vin}")
+    public Response postVehicle(@PathParam("vin") String vin) {
         Vehicle vehicle = new Vehicle();
-        vehicle.setVin("12345");
+        vehicle.setVin(vin);
         repository.save(vehicle);
         return Response.ok().build();
     }
